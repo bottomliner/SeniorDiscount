@@ -1,2 +1,2 @@
-# SeniorDiscount
-App for Senior Citizens to show their amount to pay and savings made using Philippine Laws on discuounting.
+# Senior-PWDCalculator
+App for Senior Citizens and PWED to show their amount to pay and savings made using Philippine Laws on discounting.
