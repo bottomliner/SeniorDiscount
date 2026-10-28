@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12305a">
 <title>Senior Discount Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,15 +10,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f4f7fb; --card:#ffffff; --ink:#14202e; --muted:#4a5a6c;
-  --navy:#12305a; --navy-ink:#ffffff; --line:#c9d3df;
-  --save:#17703c; --save-bg:#e3f3ea; --sun:#f2b705;
+  --bg:#eaf0f8; --card:#ffffff; --ink:#14202e; --muted:#4a5a6c; --line:#c4d0de;
+  --navy:#12305a; --navy-ink:#ffffff; --head:#12305a; --bar:#12305a;
+  --sun:#f2b705; --sun-ink:#1b2430; --tile:#f1f5fa;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#0e1621; --card:#17222f; --ink:#f1f5f9; --muted:#aebccc;
-    --navy:#8db6ee; --navy-ink:#0e1621; --line:#34465a;
-    --save:#7fd9a2; --save-bg:#173a28;
+    --bg:#0c141e; --card:#16212e; --ink:#f1f5f9; --muted:#aebccc; --line:#34465a;
+    --navy:#8db6ee; --navy-ink:#0c141e; --head:#1a3a66; --bar:#1d3f70; --tile:#1d2b3b;
   }
 }
 *{box-sizing:border-box}
@@ -26,111 +25,161 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  font-size:20px; line-height:1.4;
-  padding:20px 16px 40px; max-width:560px; margin-inline:auto;
+  font-size:20px; line-height:1.35; padding-bottom:150px;
 }
-h1{font-size:26px; margin:4px 0 2px; color:var(--navy)}
-.sub{color:var(--muted); margin:0 0 20px; font-size:18px}
-label,.lbl{display:block; font-weight:700; margin:20px 0 8px}
-.cats{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.top{
+  background:var(--head); color:#fff; padding:22px 18px 22px;
+  padding-top:calc(22px + env(safe-area-inset-top,0px));
+  border-bottom:6px solid var(--sun);
+}
+.top h1{margin:0; font-size:27px; max-width:560px; margin-inline:auto}
+main{max-width:560px; margin:0 auto; padding:16px 14px 0}
+.step{background:var(--card); border-radius:20px; padding:18px 16px 20px; margin-bottom:14px; box-shadow:0 1px 0 var(--line)}
+.step h2{display:flex; align-items:center; gap:12px; margin:0 0 14px; font-size:21px; line-height:1.25}
+.n{
+  flex:none; width:36px; height:36px; border-radius:50%; background:var(--sun); color:var(--sun-ink);
+  display:grid; place-items:center; font-weight:700; font-size:20px;
+}
+.h-text{flex:1}
+.clear{
+  flex:none; min-height:44px; padding:0 14px; font:inherit; font-size:17px; font-weight:700;
+  background:transparent; color:var(--navy); border:2px solid var(--line); border-radius:12px; cursor:pointer;
+}
+.cats{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
 .cat{
-  min-height:64px; border:2px solid var(--line); background:var(--card); color:var(--ink);
-  border-radius:14px; font:inherit; font-weight:700; padding:10px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  min-height:88px; padding:8px 2px; background:var(--tile); color:var(--ink);
+  border:2px solid var(--line); border-radius:16px; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
 }
+.cat svg{width:34px; height:34px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
 .cat[aria-pressed="true"]{background:var(--navy); color:var(--navy-ink); border-color:var(--navy)}
+.cat[aria-pressed="true"] svg{stroke:var(--sun)}
+@media (prefers-color-scheme: dark){ .cat[aria-pressed="true"] svg{stroke:#12305a} }
 .money{position:relative}
-.money span{position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:28px; font-weight:700; color:var(--muted)}
+.money span{position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:30px; font-weight:700; color:var(--muted)}
 input[type=number]{
-  width:100%; font:inherit; font-size:32px; font-weight:700; padding:14px 14px 14px 48px;
-  border:2px solid var(--line); border-radius:14px; background:var(--card); color:var(--ink);
+  width:100%; font:inherit; font-size:34px; font-weight:700; padding:14px 14px 14px 50px;
+  border:2px solid var(--line); border-radius:14px; background:var(--bg); color:var(--ink);
 }
 input.plain{padding-left:14px; font-size:22px}
 input:focus,button:focus-visible,summary:focus-visible{outline:4px solid var(--sun); outline-offset:2px}
-.toggle{display:flex; align-items:center; gap:12px; margin:20px 0 0; font-weight:400; cursor:pointer}
-.toggle input{width:28px; height:28px; accent-color:var(--navy)}
-.hint{color:var(--muted); font-size:17px; margin:6px 0 0}
-.result{
-  margin-top:26px; background:var(--card); border:2px solid var(--navy); border-radius:18px; padding:20px;
+.hint{color:var(--muted); font-size:17px; margin:8px 0 0}
+.toggle{display:flex; align-items:center; gap:12px; margin:18px 0 0; cursor:pointer; font-size:19px}
+.toggle input{width:28px; height:28px; accent-color:var(--navy); flex:none}
+.sub-label{display:block; font-weight:700; margin:18px 0 8px}
+details{margin-top:18px; border-top:1px solid var(--line); padding-top:6px}
+summary{cursor:pointer; font-weight:700; padding:10px 0}
+
+.bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:5;
+  background:var(--bar); color:#fff; border-radius:22px 22px 0 0;
+  padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -4px 18px rgba(0,0,0,.22);
 }
-.pay-label{font-size:18px; color:var(--muted); margin:0}
-.pay{font-size:56px; font-weight:700; line-height:1.05; margin:2px 0 14px; color:var(--navy); word-break:break-word}
-.row{display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid var(--line)}
+.bar-in{max-width:560px; margin:0 auto}
+.bar-top{display:flex; align-items:center; gap:12px}
+.bar-top .n{width:32px; height:32px; font-size:18px}
+.pay-box{flex:1; min-width:0}
+.pay-label{font-size:16px; opacity:.85; margin:0}
+.pay{font-size:40px; font-weight:700; line-height:1.05; margin:0; word-break:break-word}
+.pay.empty{font-size:20px; font-weight:400; opacity:.9; line-height:1.3}
+.save{
+  flex:none; background:var(--sun); color:var(--sun-ink); border-radius:14px; padding:8px 12px; text-align:center;
+  font-weight:700; font-size:22px; line-height:1.1;
+}
+.save small{display:block; font-size:14px; font-weight:700}
+.how{
+  margin-top:10px; width:100%; min-height:44px; font:inherit; font-size:17px; font-weight:700;
+  background:rgba(255,255,255,.14); color:#fff; border:0; border-radius:12px; cursor:pointer;
+}
+.how-body{margin-top:8px; max-height:42vh; overflow:auto}
+.row{display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid rgba(255,255,255,.25)}
 .row b{white-space:nowrap}
-.saved{
-  margin-top:14px; background:var(--save-bg); color:var(--save);
-  border-radius:12px; padding:12px 14px; font-weight:700; font-size:22px; display:flex; justify-content:space-between; gap:10px;
-}
-.note{color:var(--muted); font-size:17px; margin:14px 0 0}
-details{margin-top:24px; border-top:1px solid var(--line); padding-top:12px}
-summary{cursor:pointer; font-weight:700; padding:8px 0}
-.reset{
-  margin-top:22px; width:100%; min-height:56px; font:inherit; font-weight:700;
-  background:transparent; color:var(--navy); border:2px solid var(--navy); border-radius:14px; cursor:pointer;
-}
-.empty{color:var(--muted); margin:0}
+.note{margin:10px 0 0; font-size:17px; opacity:.92}
 [hidden]{display:none !important}
 </style>
 </head>
 <body>
 
-<h1>Senior Discount</h1>
-<p class="sub">Type the price on the bill. See what you pay.</p>
+<header class="top"><h1>Senior Discount Calculator</h1></header>
 
-<div class="lbl" id="catlbl">What are you buying?</div>
-<div class="cats" role="group" aria-labelledby="catlbl">
-  <button class="cat" data-cat="medicine" aria-pressed="true">Medicine</button>
-  <button class="cat" data-cat="restaurant" aria-pressed="false">Restaurant</button>
-  <button class="cat" data-cat="transport" aria-pressed="false">Transport and other</button>
-  <button class="cat" data-cat="grocery" aria-pressed="false">Groceries</button>
-</div>
+<main>
+  <section class="step" aria-labelledby="s1">
+    <h2 id="s1"><span class="n">1</span><span class="h-text">What are you paying for?</span></h2>
+    <div class="cats" role="group" aria-labelledby="s1">
+      <button class="cat" data-cat="restaurant" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v6a3 3 0 0 0 6 0V3M9 3v18M17 21V3c-2.5 1.5-3.5 4-3.5 7.5H17"/></svg>
+        Restaurant
+      </button>
+      <button class="cat" data-cat="medicine" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(-45 12 12)"><rect x="2" y="8.5" width="20" height="7" rx="3.5"/><path d="M12 8.5v7"/></g></svg>
+        Medicine
+      </button>
+      <button class="cat" data-cat="transport" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M7 18v3M17 18v3M8 14.5h.01M16 14.5h.01"/></svg>
+        Transport
+      </button>
+      <button class="cat" data-cat="grocery" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 11H5L3 9zM8 9l3-5M16 9l-3-5"/></svg>
+        Groceries
+      </button>
+    </div>
+  </section>
 
-<label for="total" id="totalLbl">Price on the bill</label>
-<div class="money"><span>₱</span><input id="total" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"></div>
-<p class="hint" id="totalHint">Use the full price with VAT, as printed.</p>
+  <section class="step" aria-labelledby="totalLbl">
+    <h2><span class="n">2</span><span class="h-text" id="totalLbl">Type the price on the bill with VAT</span><button class="clear" id="reset">Clear</button></h2>
+    <div class="money"><span>₱</span><input id="total" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" aria-labelledby="totalLbl"></div>
+    <p class="hint" id="totalHint"></p>
 
-<label class="toggle" id="shareWrap"><input type="checkbox" id="shared"> <span>Bill is shared with other people</span></label>
+    <label class="toggle" id="shareWrap"><input type="checkbox" id="shared"> <span>Bill is shared with other people</span></label>
+    <div id="shareBox" hidden>
+      <label class="sub-label" for="mine">Only my part of the bill</label>
+      <div class="money"><span>₱</span><input id="mine" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"></div>
+      <p class="hint">Only what I ordered or use myself. The discount cannot be used for other people.</p>
+    </div>
 
-<div id="shareBox" hidden>
-  <label for="mine">Only my part of the bill</label>
-  <div class="money"><span>₱</span><input id="mine" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"></div>
-  <p class="hint">Only what I ordered or use myself. The discount cannot be used for other people.</p>
-</div>
+    <details id="settings" hidden>
+      <summary>Grocery rate and weekly limit</summary>
+      <label class="sub-label" for="gRate">Discount on basic goods (%)</label>
+      <input class="plain" id="gRate" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="5">
+      <label class="sub-label" for="gCap">Weekly limit (₱)</label>
+      <input class="plain" id="gCap" type="number" inputmode="decimal" min="0" step="1" value="2500">
+      <label class="sub-label" for="gUsed">Already used this week (₱)</label>
+      <input class="plain" id="gUsed" type="number" inputmode="decimal" min="0" step="1" value="0">
+      <p class="hint">Grocery rules differ from other purchases and can change. Confirm the current rate and limit with the store or the DTI, then update here.</p>
+    </details>
+  </section>
+</main>
 
-<section class="result" id="result" aria-live="polite">
-  <p class="empty" id="empty">Enter a price to start.</p>
-  <div id="out" hidden>
-    <p class="pay-label" id="payLabel">You pay</p>
-    <p class="pay" id="pay">₱0.00</p>
-    <div id="rows"></div>
-    <div class="saved"><span>You save</span><span id="saved">₱0.00</span></div>
-    <p class="note" id="note"></p>
+<aside class="bar" id="bar" aria-live="polite">
+  <div class="bar-in">
+    <div class="bar-top">
+      <span class="n" aria-hidden="true">3</span>
+      <div class="pay-box">
+        <p class="pay-label" id="payLabel">You pay</p>
+        <p class="pay empty" id="pay">Your price shows here</p>
+      </div>
+      <div class="save" id="saveBox" hidden><small>You save</small><span id="saved">₱0.00</span></div>
+    </div>
+    <button class="how" id="howBtn" aria-expanded="false" hidden>Show how it is computed</button>
+    <div class="how-body" id="howBody" hidden>
+      <div id="rows"></div>
+      <p class="note" id="note"></p>
+    </div>
   </div>
-</section>
-
-<button class="reset" id="reset">Clear and start over</button>
-
-<details id="settings">
-  <summary>Grocery settings</summary>
-  <label for="gRate">Discount on basic goods (%)</label>
-  <input class="plain" id="gRate" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="5">
-  <label for="gCap">Weekly limit (₱)</label>
-  <input class="plain" id="gCap" type="number" inputmode="decimal" min="0" step="1" value="2500">
-  <label for="gUsed">Already used this week (₱)</label>
-  <input class="plain" id="gUsed" type="number" inputmode="decimal" min="0" step="1" value="0">
-  <p class="hint">Grocery rules differ from other purchases and can change. Please confirm the current rate and limit with the store or the DTI, then update here.</p>
-</details>
+</aside>
 
 <script>
 (function(){
   var VAT = 1.12, RATE = 0.20;
   var $ = function(id){ return document.getElementById(id); };
-  var cat = "medicine";
+  var cat = "restaurant";
 
-  var LABELS = {
-    medicine:   { total:"Price on the receipt", hint:"Use the full price with VAT, as printed. Covers medicines and other items the pharmacy lists as covered.", pay:"You pay" },
-    restaurant: { total:"Total bill", hint:"Use the full bill with VAT. Do not add tip.", pay:"You pay" },
-    transport:  { total:"Price or fare", hint:"For fares, hotels, and other covered services. Use the price with VAT.", pay:"You pay" },
-    grocery:    { total:"Basic goods you are buying", hint:"Only your basic necessities and prime commodities, not snacks or other items.", pay:"You pay" }
+  var HINTS = {
+    restaurant: "Use the full bill, as printed.",
+    medicine:   "Covers medicines the pharmacy lists as covered.",
+    transport:  "Fares, hotels, and other covered services.",
+    grocery:    "Only basic necessities and prime commodities, not snacks or other items."
   };
 
   function peso(n){
@@ -142,16 +191,21 @@ summary{cursor:pointer; font-weight:700; padding:8px 0}
   }
   function r2(n){ return Math.round(n*100)/100; }
 
-  // Core math for covered items: remove VAT, then take 20% off.
-  function seniorPrice(vatInclusive){
-    var base = r2(vatInclusive / VAT);
-    var vat  = r2(vatInclusive - base);
+  function seniorPrice(p){
+    var base = r2(p / VAT);
+    var vat  = r2(p - base);
     var disc = r2(base * RATE);
-    return { vat:vat, base:base, disc:disc, pay:r2(base - disc) };
+    return { vat:vat, disc:disc, pay:r2(base - disc) };
   }
+  function row(l, v){ return '<div class="row"><span>'+l+'</span><b>'+v+'</b></div>'; }
 
-  function row(label, value){
-    return '<div class="row"><span>'+label+'</span><b>'+value+'</b></div>';
+  function showEmpty(msg){
+    $("payLabel").textContent = "Step 3";
+    $("pay").textContent = msg; $("pay").className = "pay empty";
+    $("saveBox").hidden = true; $("howBtn").hidden = true; $("howBody").hidden = true;
+    $("howBtn").setAttribute("aria-expanded","false");
+    $("howBtn").textContent = "Show how it is computed";
+    fit();
   }
 
   function calc(){
@@ -160,36 +214,25 @@ summary{cursor:pointer; font-weight:700; padding:8px 0}
     var mine = shared ? num("mine") : total;
     var warn = "";
 
-    if (shared && mine > total && total > 0){
-      warn = "Your part is more than the whole bill. Please check the numbers.";
-      mine = total;
-    }
-    if (!total){
-      $("out").hidden = true; $("empty").hidden = false;
-      $("empty").textContent = "Enter a price to start.";
-      return;
-    }
-    if (shared && !mine){
-      $("out").hidden = true; $("empty").hidden = false;
-      $("empty").textContent = "Now enter only your part of the bill.";
-      return;
-    }
+    if (!total) return showEmpty("Your price shows here");
+    if (shared && !mine) return showEmpty("Now type only your part");
+    if (shared && mine > total){ warn = "Your part is more than the whole bill. Please check the numbers."; mine = total; }
 
-    var rows = "", pay, saved, note = "", payLabel = "You pay";
+    var rows = "", pay, saved, note = "", label = "You pay";
 
     if (cat === "grocery"){
       var rate = Math.max(0, parseFloat($("gRate").value) || 0) / 100;
       var cap  = Math.max(0, parseFloat($("gCap").value) || 0);
       var used = Math.max(0, parseFloat($("gUsed").value) || 0);
       var room = Math.max(0, cap - used);
-      var eligible = Math.min(mine, room);
-      var d = r2(eligible * rate);
+      var elig = Math.min(mine, room);
+      var d = r2(elig * rate);
       pay = r2(mine - d); saved = d;
       rows += row("Goods total", peso(mine));
-      rows += row("Counts toward the discount", peso(eligible));
+      rows += row("Counts toward the discount", peso(elig));
       rows += row("Discount (" + (rate*100) + "%)", "− " + peso(d));
-      if (mine > room) note = "Part of this is above your weekly limit, so it gets no discount.";
-      else note = "Rate and weekly limit are set under Grocery settings below.";
+      note = mine > room ? "Part of this is above your weekly limit, so it gets no discount."
+                         : "Rate and weekly limit are set under Grocery rate and weekly limit.";
     } else {
       var s = seniorPrice(mine);
       rows += row("Price with VAT", peso(mine));
@@ -199,21 +242,21 @@ summary{cursor:pointer; font-weight:700; padding:8px 0}
       if (shared){
         var others = r2(total - mine);
         rows += row("Others pay (full price)", peso(others));
-        rows += row("Total to pay at the counter", peso(r2(pay + others)));
-        payLabel = "Your part";
-        note = "The cashier will take the discount off only your part.";
+        rows += row("Total at the counter", peso(r2(pay + others)));
+        label = "Your part";
+        note = "The cashier takes the discount off only your part.";
       } else {
         note = "Show your Senior Citizen ID before paying. Do not combine with another discount.";
       }
     }
     if (warn) note = warn;
 
-    $("payLabel").textContent = payLabel;
-    $("pay").textContent = peso(pay);
-    $("rows").innerHTML = rows;
+    $("payLabel").textContent = label;
+    $("pay").textContent = peso(pay); $("pay").className = "pay";
     $("saved").textContent = peso(saved);
-    $("note").textContent = note;
-    $("empty").hidden = true; $("out").hidden = false;
+    $("saveBox").hidden = false; $("howBtn").hidden = false;
+    $("rows").innerHTML = rows; $("note").textContent = note;
+    fit();
   }
 
   function setCat(c){
@@ -221,24 +264,22 @@ summary{cursor:pointer; font-weight:700; padding:8px 0}
     document.querySelectorAll(".cat").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.cat === c ? "true" : "false");
     });
-    var L = LABELS[c];
-    $("totalLbl").textContent = L.total;
-    $("totalHint").textContent = L.hint;
+    $("totalHint").textContent = HINTS[c];
     $("shareWrap").hidden = (c === "grocery");
-    $("shareBox").hidden = !( $("shared").checked && c !== "grocery" );
-    if (c === "grocery") $("settings").open = false;
-    save(); calc();
+    $("shareBox").hidden = !($("shared").checked && c !== "grocery");
+    $("settings").hidden = (c !== "grocery");
+    calc();
   }
 
+  function fit(){ document.body.style.paddingBottom = ($("bar").offsetHeight + 20) + "px"; }
+
   function save(){
-    try{ localStorage.setItem("sdc", JSON.stringify({
-      g:[$("gRate").value,$("gCap").value,$("gUsed").value]
-    })); }catch(e){}
+    try{ localStorage.setItem("sdc", JSON.stringify([$("gRate").value,$("gCap").value,$("gUsed").value])); }catch(e){}
   }
   function load(){
     try{
       var s = JSON.parse(localStorage.getItem("sdc")||"null");
-      if (s && s.g){ $("gRate").value=s.g[0]; $("gCap").value=s.g[1]; $("gUsed").value=s.g[2]; }
+      if (s){ $("gRate").value=s[0]; $("gCap").value=s[1]; $("gUsed").value=s[2]; }
     }catch(e){}
   }
 
@@ -249,15 +290,22 @@ summary{cursor:pointer; font-weight:700; padding:8px 0}
     $(id).addEventListener("input", function(){ save(); calc(); });
   });
   $("shared").addEventListener("change", function(){
-    $("shareBox").hidden = !$("shared").checked;
-    calc();
+    $("shareBox").hidden = !$("shared").checked; calc();
+  });
+  $("howBtn").addEventListener("click", function(){
+    var open = $("howBody").hidden;
+    $("howBody").hidden = !open;
+    this.setAttribute("aria-expanded", open ? "true" : "false");
+    this.textContent = open ? "Hide the computation" : "Show how it is computed";
+    fit();
   });
   $("reset").addEventListener("click", function(){
     $("total").value = ""; $("mine").value = ""; $("shared").checked = false;
     $("shareBox").hidden = true; calc(); $("total").focus();
   });
+  window.addEventListener("resize", fit);
 
-  load(); setCat("medicine");
+  load(); setCat("restaurant");
 })();
 </script>
 </body>
